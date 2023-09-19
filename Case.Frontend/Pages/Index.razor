@@ -1,0 +1,64 @@
+﻿@page "/"
+
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Index</PageTitle>
+
+<h1>PwC Case: Beregn avstand</h1>
+
+<div style="max-width: 600px">
+    <MudTextField Variant="Variant.Outlined" Label="By 1" T="string" Value="@_city1" ValueChanged="SetCity1" />
+    <MudTextField Variant="Variant.Outlined" Label="By 2" T="string" Value="@_city2" ValueChanged="SetCity2" />
+</div>
+
+<div>
+    <h1>Distance: @_distance</h1>
+</div>
+
+@code 
+{
+    private string _city1 = string.Empty;
+    private string _city2 = string.Empty;
+    private double? _distance = null;
+
+    private bool _loading = false;
+    private HttpClient _httpClient = new();
+
+    private async Task SetCity1(string v)
+    {
+        _city1 = v;
+
+        await GetDistance();
+    }
+
+    private async Task SetCity2(string v)
+    {
+        _city2 = v;
+
+        await GetDistance();
+    }
+
+    public async Task GetDistance()
+    { 
+        if (!string.IsNullOrWhiteSpace(_city1) && !string.IsNullOrWhiteSpace(_city2))
+        {
+            _loading = true;
+            var distanceDTO = await _httpClient.GetFromJsonAsync<CityDistanceDTO>($"CityDistance?city1={_city1}&city2={_city2}");
+
+            _distance = distanceDTO?.Distance;
+
+            _loading = false;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        _httpClient = new HttpClient();
+        #if DEBUG
+            _httpClient.BaseAddress = new Uri("http://localhost:5222");
+        #else
+            _httpClient.BaseAddress = new Uri("http://unknown.com");
+        #endif
+    }
+}
