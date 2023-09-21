@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace PwC.Case.Backend.Controllers;
+namespace Case.Backend.Controllers;
 
 public class NinjaApiDTO
 {

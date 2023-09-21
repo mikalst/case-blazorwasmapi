@@ -1,4 +1,4 @@
-namespace PwC.Case.Backend;
+namespace Case.Backend;
 
 public class CityDistanceDTO
 {
